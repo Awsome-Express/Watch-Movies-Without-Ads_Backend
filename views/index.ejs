@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Xem phim không quảng cáo</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1>Xem phim không quảng cáo</h1>
+    <form action="/xemphim" method="GET">
+      <label for="">Nhập tên phim và tập phim (Phim Conan tập 97)</label>
+      <input type="text" name="keyword">
+      <input type="submit" value="Submit">
+    </form>
+    <% if (urls.length > 0) { %>
+      <% for(let i=0; i < urls.length; i++) { %>
+        <a href="/view?link=<%= urls[i] %>" target="_blank">Server <%= i + 1 %></a>
+     <% } %>
+    <% } %>
+
+  </body>
+</html>
