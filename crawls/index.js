@@ -3,11 +3,12 @@ const axios = require('axios');
 let m3u8Urls = []
 const run = async (keyword) => {
   m3u8Urls = []
-  const browser = await puppeteer.launch({headless: true, args: ['--no-sandbox','--disable-setuid-sandbox']})
+  const browser = await puppeteer.launch({headless: false, args: ['--no-sandbox','--disable-setuid-sandbox']})
   const page = await browser.newPage()
 
   await page.goto('https://www.google.com/', { waitUntil: 'networkidle2', timeout: 0 })
   console.log(keyword);
+  if(!hasNumber(keyword)) keyword = keyword + 'Tập 1'
   await page.type('input[class="gLFyf gsfi"]', `phim ${keyword}`)
   await page.keyboard.press('Enter')
   await page.waitForNavigation()
@@ -35,9 +36,13 @@ const run = async (keyword) => {
 
         const idVideo = await page.evaluate(() => {
           // Browser Page Environment
-          console.log(EpisodeID);
-          return EpisodeID
+          try {
+            return EpisodeID
+          } catch (error) {
+            return null
+          }
         });
+        if(!idVideo) break
         // await page.waitForSelector("iframe");
         // console.log('load');
         // console.log(idVideo);
@@ -107,6 +112,9 @@ const fetchApi = async (url) => {
     }
 }
 
+function hasNumber(myString) {
+  return /\d/.test(myString);
+}
 module.exports = {
   run: run
 }
