@@ -3,7 +3,7 @@ const axios = require('axios');
 let m3u8Urls = []
 const run = async (keyword) => {
   m3u8Urls = []
-  const browser = await puppeteer.launch({headless: true})
+  const browser = await puppeteer.launch({headless: true, args: ['--no-sandbox','--disable-setuid-sandbox']})
   const page = await browser.newPage()
 
   await page.goto('https://www.google.com/', { waitUntil: 'networkidle2', timeout: 0 })
