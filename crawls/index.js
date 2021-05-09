@@ -3,9 +3,6 @@ const axios = require('axios');
 let m3u8Urls = []
 const run = async (keyword) => {
   m3u8Urls = []
-  const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker')
-
-  puppeteer.use(AdblockerPlugin())
   const browser = await puppeteer.launch({headless: true})
   const page = await browser.newPage()
 
@@ -21,7 +18,7 @@ const run = async (keyword) => {
       const origins = $URLS.map(item => new URL(item).origin)
       const hrefs = $URLS.map(item => item.href)
 
-      const DOMAIN_ALLOW = ['phephimz.net']
+      const DOMAIN_ALLOW = ['phephimz.net', 'mephimnhat.com', 'motphjm.net']
       DOMAIN_ALLOW.forEach(item => {
           const index = origins.findIndex(origin => origin.includes(item))
           if(index !== -1) urls.push({
@@ -32,11 +29,50 @@ const run = async (keyword) => {
       return urls
   })
   for (let index = 0; index < urlsByGoogle.length; index++) {
-      const element = urlsByGoogle[index];
-      if(element.id === 'phephimz.net') {
-          const idVideo = element.href.match(/-(\d+).html/)[1]
-          await initPlayer(`https://phephim.xyz/embed/video?id=${idVideo}`)
-      }
+    const element = urlsByGoogle[index];
+    if(element.id === 'phephimz.net') {
+        await page.goto(element.href, { waitUntil: 'networkidle2', timeout: 0 })
+
+        const idVideo = await page.evaluate(() => {
+          // Browser Page Environment
+          console.log(EpisodeID);
+          return EpisodeID
+        });
+        // await page.waitForSelector("iframe");
+        // console.log('load');
+        // console.log(idVideo);
+        await initPlayer(`https://phephim.xyz/embed/video?id=${idVideo}`)
+    }
+
+    if(element.id === 'mephimnhat.com') {
+      await page.goto(element.href, { waitUntil: 'networkidle2', timeout: 0 })
+      const url = await page.evaluate(() => {
+        // Browser Page Environment
+        return document.querySelector('#fimfast-player iframe')?.src
+      });
+      if(!url) break
+      const urlParams = new URLSearchParams(new URL(url).search)
+      const m3u8Url = urlParams.get('url')
+      // console.log(urlParams);
+      m3u8Urls.push(m3u8Url)
+    }
+
+    if(element.id === 'motphjm.net') {
+      await page.goto(element.href, { waitUntil: 'networkidle2', timeout: 0 })
+      const url = await page.evaluate(() => {
+        // Browser Page Environment
+        return document.querySelector('#player iframe')?.src
+      });
+      if(!url) break
+      await page.goto(url, { waitUntil: 'networkidle2', timeout: 0 })
+      const m3u8Url = await page.evaluate(() => {
+        // Browser Page Environment
+        console.log(xdata.linkPlay);
+        return xdata?.linkPlay
+      });
+      // await page.waitForSelector("iframe");
+      m3u8Urls.push(m3u8Url)
+    }
   }
 
   await browser.close();
@@ -57,14 +93,18 @@ async function initPlayer(url) {
 }
 
 const fetchApi = async (url) => {
-    const config = {
-      method: 'get',
-      url: url,
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
-    };
-    
-    const response = await axios(config)
-    return response.data
+    try {
+        const config = {
+            method: 'get',
+            url: url,
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
+        };
+        
+        const response = await axios(config)
+        return response.data
+    } catch (error) {
+        return null
+    }
 }
 
 module.exports = {
