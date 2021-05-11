@@ -6,8 +6,6 @@ const run = async (keyword) => {
   try {
     const m3u8Urls = []
 
-    keyword = 'Conan tap'
-
     const keywordRemoveAccents = removeAccents(keyword)
     const isMovieInKeyword = keywordRemoveAccents.indexOf('tap') !== -1 ? false : true
     console.log(keywordRemoveAccents);
@@ -51,7 +49,8 @@ const run = async (keyword) => {
           m3u8Url && m3u8Urls.push({
             title: video.title,
             url: m3u8Url,
-            thumbnail: video.thumbnail
+            thumbnail: video.thumbnail,
+            episode: episode
           })
         })
       )

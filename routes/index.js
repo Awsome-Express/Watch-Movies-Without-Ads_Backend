@@ -3,11 +3,11 @@ var router = express.Router();
 /* GET home page. */
 router.get('/xemphim', async (req, res, next) => {
   const keyword = req.query.keyword
-  let  urls = []
+  let  videos = []
   if(keyword) {
-    urls = await require('../crawls/cheerio').run(keyword)
+    videos = await require('../crawls/cheerio').run(keyword)
   }
-  res.send({urls: urls});
+  res.send(videos)
 });
 
 router.get('/view', async (req, res, next) => {
