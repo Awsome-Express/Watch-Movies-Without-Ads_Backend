@@ -58,16 +58,18 @@ const run = async (keyword) => {
 
     // get movie
     if(isMovieInKeyword) {
-      console.log('movies');
-      const videoMovies = [...videos].filter(video => video.isMovie)
       await Promise.all(
-        videoMovies.map(async (video) => {
-          if(!video.isMovie) return
-          const m3u8Url = await getM3u8Url(video)
+        videos.map(async (video) => {
+          let episode = null
+          if(!video.isMovie) {
+            episode = 1
+          }
+          const m3u8Url = await getM3u8Url(video, episode)
           m3u8Url && m3u8Urls.push({
             title: video.title,
             url: m3u8Url,
-            thumbnail: video.thumbnail
+            thumbnail: video.thumbnail,
+            episode: episode
           })
         })
       )
