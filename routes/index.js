@@ -9,10 +9,4 @@ router.get('/xemphim', async (req, res, next) => {
   }
   res.send(videos)
 });
-
-router.get('/view', async (req, res, next) => {
-  const link = req.query.link
-  res.render('view', { link: link });
-});
-
 module.exports = router;
